@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MangaFlow</title>
+    <script src="../translation-contract.js"></script>
+    <script type="module" crossorigin src="../popup.js"></script>
+    <link rel="stylesheet" crossorigin href="../assets/popup.css">
+  </head>
+  <body>
+    <header><h1>MangaFlow</h1><span id="badge" class="badge">Kapalı</span></header>
+
+    <section>
+      <button id="activate" class="primary">Bu sayfada etkinleştir</button>
+      <p id="permNote" class="note">Etkinleştirmede, görselleri okuyabilmek için site erişim izni istenir. Görselleriniz hiçbir sunucuya gönderilmez.</p>
+    </section>
+
+    <section id="controls" hidden>
+      <label class="row"><input type="checkbox" id="auto" /> Otomatik çeviri</label>
+      <label class="row"><input type="checkbox" id="showOriginal" /> Orijinal metni göster</label>
+      <button id="translateNow">Geçerli sayfayı çevir</button>
+
+      <label class="col">Çeviri motoru
+        <select id="translationMode">
+          <option value="opus">Hızlı — OPUS-MT (tarayıcı)</option>
+          <option value="ollama" disabled>Kaliteli — Ollama / Qwen (bağlantı kapalı)</option>
+          <option value="webgpu" disabled>Deneysel — Qwen / WebGPU (kontrol ediliyor)</option>
+        </select>
+      </label>
+      <p id="capabilityNote" class="note" aria-live="polite">Deneysel modun cihaz uygunluğu kontrol ediliyor. “Kaliteli” mod adı bir kalite garantisi değildir.</p>
+      <label class="row"><input type="checkbox" id="allowOpusFallback" /> Seçilen motor hata verirse OPUS-MT'ye dönüşe izin ver</label>
+      <details><summary>Ollama / Qwen ayarları</summary>
+        <p class="note">Bu seçenek açıkken yalnızca yerel Ollama'ya konuşma metni ve bağlam gönderilir. Görsel gönderilmez. Kapalıyken bağlantı kurulmaz.</p>
+        <label class="col">Yerel adres<input id="ollamaEndpoint" type="url" value="http://127.0.0.1:11434" /></label>
+        <label class="col">Ollama modeli<select id="ollamaModel"><option value="qwen2.5:0.5b">Qwen 2.5 — 0.5B (düşük kaynak, sınırlı kalite)</option><option value="qwen2.5:1.5b">Qwen 2.5 — 1.5B</option><option value="qwen2.5:7b">Qwen 2.5 — 7B (yüksek bellek)</option></select></label>
+        <label class="row"><input type="checkbox" id="ollamaEnabled" /> Yerel Ollama bağlantısını etkinleştir</label>
+        <button id="testOllama">Ollama bağlantısını sınayın</button><p id="ollamaNote" class="note" aria-live="polite"></p>
+        <p class="note">CORS için OLLAMA_ORIGINS değeri yalnızca aşağıdaki eklenti kökeni olmalı. Ağ bağlamasını 127.0.0.1 üzerinde tutun; joker yıldız kullanmayın.</p><code id="extensionOrigin"></code>
+      </details>
+      <details><summary>İsimler, terimler ve hikâye bağlamı</summary>
+        <label class="col">Sözlük — her satırda kaynak = hedef<textarea id="glossary" rows="4" placeholder="Sung Jinwoo = Sung Jinwoo&#10;Suho = Suho&#10;shadow army = gölge ordusu"></textarea></label>
+        <label class="col">Önceki olaylar / konuşma bağlamı<textarea id="storyContext" rows="3" maxlength="2000" placeholder="Çeviride kullanılacak kısa bağlam"></textarea></label>
+        <button id="saveTranslationContext">Sözlüğü ve bağlamı kaydet</button>
+      </details>
+      <label class="col">Yazı boyutu <input type="range" id="fontScale" min="0.6" max="1.6" step="0.1" /></label>
+      <label class="col">Çalışma profili
+        <select id="profile">
+          <option value="balanced">Dengeli</option>
+          <option value="fast">Hızlı</option>
+        </select>
+      </label>
+      <label class="col">Okuma yönü<select id="readingDirection"><option value="ltr">Soldan sağa</option><option value="rtl">Sağdan sola</option></select></label>
+
+      <div class="status" id="status" aria-live="polite"></div>
+      <details><summary>Hatalar</summary><ul id="errors"></ul></details>
+      <label class="col">Görsel başka alan adındaysa erişim izni<input id="imageOrigin" type="url" placeholder="https://gorsel-sunucusu.example" /></label>
+      <button id="grantImageOrigin">Bu görsel alan adına izin ver</button>
+      <button id="deactivate">Bu sayfada kapat</button>
+      <button id="clearCache" class="danger">Önbelleği temizle</button>
+    </section>
+
+  </body>
+</html>
