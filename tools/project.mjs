@@ -1,0 +1,8 @@
+import path from 'node:path';
+import fs from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+export const ROOT=path.resolve(fileURLToPath(new URL('../',import.meta.url)));
+export const RUNTIME=['manifest.json','content.js','offscreen.html','offscreen.js','ocr-engine.js','ollama-client.js','overlay-renderer.js','popup.js','service-worker.js','translation-contract.js','translation-worker.js','translator-providers.js'];
+export function within(root,relative){if(!relative||path.isAbsolute(relative)||relative.includes('\\')||relative.split('/').includes('..'))throw Error('Güvensiz göreli yol: '+relative);const resolved=path.resolve(root,relative);if(!resolved.startsWith(path.resolve(root)+path.sep))throw Error('Proje dışı yol: '+relative);return resolved;}
+export async function filesUnder(root,relative='',include=()=>true){const result=[];for(const entry of await fs.readdir(path.join(root,relative),{withFileTypes:true})){const rel=path.posix.join(relative,entry.name);if(!include(rel))continue;if(entry.isSymbolicLink())throw Error('Paketlenmeyen sembolik bağlantı: '+entry.name);if(entry.isDirectory())result.push(...await filesUnder(root,rel,include));else result.push(rel);}return result;}
+export function sourceFile(relative){const parts=relative.split('/');return !parts.some(p=>['.git','node_modules','.cache','dist','vendor','models','coverage','test-results','playwright-report'].includes(p)||p.startsWith('.cache-build-'))&&!/\.(zip|crx|pem|key|log|tmp|part|traineddata)(\.gz)?$/i.test(relative)&&!/(^|\/)\.env(?:\.|$)/.test(relative)&&!/^tools\/.*(?:-results\.json|\.png)$/.test(relative)&&relative!=='asset-integrity.json';}

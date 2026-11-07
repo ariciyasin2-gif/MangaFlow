@@ -1,0 +1,2 @@
+const fs=require('fs'),assert=require('assert/strict');const test=async(name,fn)=>{await fn();console.log('PASS',name);};
+(async()=>{ await test('Tokenizer sözlük kimlikleri orijinal model ile eşleşir',()=>{const j=JSON.parse(fs.readFileSync(__dirname+'/../vendor/tokenizer-fixed.json')),v=JSON.parse(fs.readFileSync(__dirname+'/../models/onnx-community/opus-mt-tc-big-en-tr/vocab.json'));for(const [token,id]of Object.entries(v))assert.equal(j.model.vocab[id][0],token);assert.equal(j.model.unk_id,v['<unk>']);}); })().catch(e=>{console.error(e);process.exitCode=1;});
