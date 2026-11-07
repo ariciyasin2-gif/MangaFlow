@@ -1,0 +1,21 @@
+name: Geliştirme önerisi
+description: Bir sorun ve ölçülebilir çözüm önerin.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Hangi sorunu çözüyor?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Önerilen değişiklik ve kabul ölçütü
+    validations:
+      required: true
+  - type: textarea
+    id: tests
+    attributes:
+      label: Nasıl test edilmeli?
+      description: Kalite/gecikme/bellek iddiaları için ölçüm yöntemi belirtin.
