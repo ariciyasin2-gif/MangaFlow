@@ -1,0 +1,33 @@
+name: Hata bildirimi
+description: Tekrarlanabilir bir MangaFlow hatası bildirin.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "Kişisel veri, erişim anahtarı, tarayıcı profili veya telifli tam manga görseli yüklemeyin. Hata günlüklerini paylaşmadan önce temizleyin."
+  - type: textarea
+    id: problem
+    attributes:
+      label: Sorun ve beklenen davranış
+      description: Ne oldu, ne olmasını bekliyordunuz?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Tekrarlama adımları
+      placeholder: "1. ...\n2. ..."
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Ortam
+      description: İşletim sistemi, tarayıcı/sürüm, MangaFlow sürümü, seçili motor/model ve kurulum yöntemi.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Temizlenmiş hata mesajı ve test sonucu
+      description: Gerçek motor mu, protokol testi mi? Geçti/başarısız/çalıştırılamadı ayrımını belirtin.
