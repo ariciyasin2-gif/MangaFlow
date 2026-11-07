@@ -1,0 +1,21 @@
+:root { color-scheme: light dark; font-family: system-ui, sans-serif; font-size: 13px; }
+body { width: 300px; margin: 0; padding: 12px; }
+header { display: flex; align-items: center; justify-content: space-between; }
+h1 { font-size: 16px; margin: 0; }
+.badge { padding: 2px 8px; border-radius: 10px; background: #999; color: #fff; font-size: 11px; }
+.badge.on { background: #2e8b57; }
+section { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+section[hidden] { display: none; }
+button { padding: 6px 10px; border-radius: 6px; border: 1px solid #8884; cursor: pointer; background: transparent; color: inherit; }
+button.primary { background: #3b6df0; color: #fff; border-color: transparent; }
+button.danger { color: #c0392b; }
+.row { display: flex; gap: 6px; align-items: center; }
+.col { display: flex; flex-direction: column; gap: 4px; }
+.note { margin: 0; font-size: 11px; opacity: 0.75; }
+.dev { font-size: 11px; opacity: 0.8; }
+.status { font-size: 12px; line-height: 1.5; }
+input, select, textarea { max-width: 100%; box-sizing: border-box; }
+textarea { resize: vertical; }
+code { display: block; overflow-wrap: anywhere; font-size: 11px; }
+button:disabled { opacity: 0.55; cursor: default; }
+ul { margin: 4px 0 0; padding-left: 16px; font-size: 11px; max-height: 100px; overflow: auto; }
