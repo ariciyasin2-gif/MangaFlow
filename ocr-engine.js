@@ -1,0 +1,13 @@
+let workerPromise;
+export function interrupted(p,signal){return new Promise((resolve,reject)=>{const abort=()=>reject(new DOMException('İptal edildi','AbortError'));if(signal.aborted)return abort();signal.addEventListener('abort',abort,{once:true});Promise.resolve(p).then(resolve,reject).finally(()=>signal.removeEventListener('abort',abort));});}
+export function cancelOcr(){const old=workerPromise;workerPromise=undefined;old?.then(w=>w.terminate()).catch(()=>{});}
+export async function recognize(data,signal,onState){const start=performance.now();workerPromise??=Tesseract.createWorker('eng',1,{workerPath:chrome.runtime.getURL('vendor/worker.min.js'),corePath:chrome.runtime.getURL('vendor/core/'),langPath:chrome.runtime.getURL('vendor/lang/'),workerBlobURL:false,logger:p=>{onState('OCR: '+({ 'loading tesseract core':'OCR çekirdeği yükleniyor','initializing tesseract':'OCR başlatılıyor','loading language traineddata':'İngilizce modeli yükleniyor','initializing api':'OCR hazırlanıyor','recognizing text':'Metin okunuyor' }[p.status]||'İşleniyor')+' '+Math.round((p.progress||0)*100)+'%');}}).catch(e=>{workerPromise=undefined;throw e;});const w=await interrupted(workerPromise,signal);
+await interrupted(w.setParameters({tessedit_pageseg_mode:'11',preserve_interword_spaces:'1'}),signal);
+const blob=await (await fetch(data)).blob();const img=await createImageBitmap(blob);const lines=[];
+try{if(img.width>8192||img.width*img.height>180000000)throw Error('Görsel güvenli bellek sınırını aşıyor');
+const scale=Math.min(1,2048/img.width),step=1792,overlap=256;
+for(let y=0;y<img.height;y+=step){const h=Math.min(step+overlap,img.height-y),c=document.createElement('canvas');c.width=Math.round(img.width*scale);c.height=Math.round(h*scale);const ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,y,img.width,h,0,0,c.width,c.height);
+let r=(await interrupted(w.recognize(c,{}, {blocks:true}),signal)).data;
+if(r.text.trim()&&r.confidence<65){const pixels=ctx.getImageData(0,0,c.width,c.height);for(let i=0;i<pixels.data.length;i+=4){const v=(pixels.data[i]+pixels.data[i+1]+pixels.data[i+2])/3>165?255:0;pixels.data[i]=pixels.data[i+1]=pixels.data[i+2]=v;}ctx.putImageData(pixels,0,0);const alt=(await interrupted(w.recognize(c,{}, {blocks:true}),signal)).data;if(alt.confidence>r.confidence)r=alt;}
+for(const b of r.blocks||[])for(const p of b.paragraphs||[])for(const l of p.lines||[]){const q=l.bbox;lines.push({text:l.text.trim(),confidence:l.confidence,box:{x:q.x0/scale,y:q.y0/scale+y,w:(q.x1-q.x0)/scale,h:(q.y1-q.y0)/scale}});}c.width=c.height=0;}
+return {width:img.width,height:img.height,lines,ms:performance.now()-start};}finally{img.close();}}

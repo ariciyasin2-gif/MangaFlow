@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "MangaFlow",
+  "version": "0.3.1",
+  "description": "İngilizce manga görsellerini aşağı kaydırdıkça Türkçeye çevirir.",
+  "minimum_chrome_version": "116",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "offscreen"
+  ],
+  "optional_host_permissions": [
+    "https://*/*",
+    "http://*/*"
+  ],
+  "background": {
+    "service_worker": "service-worker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "MangaFlow"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "version_name": "0.3.1-rc1"
+}
